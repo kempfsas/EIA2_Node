@@ -1,5 +1,5 @@
 "use strict";
-const Http = require("http");
+const Http = require("http"); //HTTP Modul wird eingebunden
 const Url = require("url");
 var Server;
 (function (Server) {
