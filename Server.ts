@@ -33,6 +33,7 @@ namespace Server {
         _response.setHeader("Access-Control-Allow-Origin", "*");
 
         _response.write("Ich habe dich gehört<br/>");
+       // _response.write( "Query-Informationen, die eingegeben wurden: " + ( query[key] ) + "<br>" ); 
         _response.write("Das Ergebnis ist: " + (a + b));
 
         _response.end();
