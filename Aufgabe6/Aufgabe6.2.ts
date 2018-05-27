@@ -1,3 +1,6 @@
+
+//In Gruppenarbeit erstellt
+
 namespace Aufgabe6 {
     window.addEventListener("load", init);
 

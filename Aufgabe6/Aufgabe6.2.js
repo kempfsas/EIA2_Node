@@ -1,3 +1,4 @@
+//In Gruppenarbeit erstellt
 var Aufgabe6;
 (function (Aufgabe6) {
     window.addEventListener("load", init);

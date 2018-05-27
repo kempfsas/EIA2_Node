@@ -1,3 +1,4 @@
+//In Gruppenarbeit erstellt
 var Aufgabe6;
 (function (Aufgabe6) {
     // Simples Array zum Speichern der Studi-Datensätze (nur zur Demonstration)
