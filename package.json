@@ -2,10 +2,10 @@
 	"name" : "Servertest",
 	"version" : "1.0.0",
 	"description" : "First Server Test",
-	"author" : "Jirka",
+	"author" : "Saskia",
 	"main" : "Server.js",
 	"scripts" : {
-		"start" : "node Server.js"
+		"start" : "node Aufgabe6/Server.js"
 	},
 	"engines" : {
 		"node" : "6.11.1"
