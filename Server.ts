@@ -1,47 +1,71 @@
-import * as Http from "http"; //HTTP Modul wird eingebunden
-import * as Url from "url"; //URL Modul wird eingebunden
+//Bindet Url Modul mit ein
+import * as Url from "url";
 
-namespace Server {
+//HTTP Objekt wird im Code erstellt
+//Interpreter sucht nach jedem möglichen Import im http- Modul  und wird ihn einzeln an das http- Objekt im Code anhängen
+import * as Http from "http";
+
+//namespace erstellen
+namespace Node {
+    let studis: Aufgabe6.Studis = {};
+
     interface AssocStringString {
-        [key: string]: string;
-    } //homogenes, assoziatives Array, Daten des Typs string werden dem key zugeordnet
-      //Interface = Assoziatives Array mit key als SChlüssel  
-    
-    let port: number = process.env.PORT; //Globale Variable - representiert den Systemumgebungs-Status der Applikation, wenn sie starte
-    if (port == undefined) //wenn der Port "undefined" ist, dann soll port 8100 sein
-        port = 8100;
-
-    let server: Http.Server = Http.createServer(); //erzeugt Server-Objekt, mit dem weiter gearbeitet werden kann
-    server.addListener("listening", handleListen); //wenn Programm läuft - sprich auf etwas "gehört wird", dann Funktionsaufruf von handleListen
-    server.addListener("request", handleRequest); //Server beibringen auf etwas zu hören
-    server.listen(port);
-
-    function handleListen(): void {
-        console.log("Ich hÃ¶re?");  //Konsolenausgabe bzw Terminalausgabe  
+        [key: string]: string | string[];
     }
 
-    function handleRequest(_request: Http.IncomingMessage, _response: Http.ServerResponse): void { //handleRequest hat automatisch zwei Parameter, ohne Rückgabewert
-        console.log("Ich hÃ¶re Stimmen!");
-        // Ausgabe in der Konsole bzw. im Terminal
-        // Server hört, wenn localhost:8100 im Browser geöffnet ist;
-        // dann erscheint im Terminal "Ich höre Stimmen"
+    // Todo: Ändern!
+    let port: number = process.env.PORT;
 
-        let query: AssocStringString = Url.parse(_request.url, true).query; //umwandeln von /?a=10&b=20 in ein JavaScript-Objekt
-        let a: number = parseInt(query["a"]); //a wird als Variable definiert
-        let b: number = parseInt(query["b"]); //b wird als Variable definiert
+    if ( port == undefined ) 
+        port = 8100; 
 
-        _response.setHeader("content-type", "text/html; charset=utf-8");
-        _response.setHeader("Access-Control-Allow-Origin", "*");
+    let server: Http.Server = Http.createServer();
+    server.addListener( "listening", handleListen );
 
-        _response.write("Ich habe dich gehÃ¶rt<br/>");
+    server.addListener( "request", handleRequest );
+    server.listen( port ); //Server soll auf gewissen port lauschen und damit wird der event-Listener listening gefeuert
+
+
+    function handleListen(): void {
+        console.log("Hallo");
+    }
+
+    function handleRequest( _request: Http.IncomingMessage, _response: Http.ServerResponse ): void {
+        
+        //Die Headers sind dazu da um von anderen Servern zugreifen zu können
+        
+        _response.setHeader('Access-Control-Allow-Origin', '*'); //* = alle; Sicherheitsfeature, jeder kann darauf zugreifen
+        _response.setHeader('Access-Control-Request-Method', '*'); //
+        
+        //Options: Um abzufragen, ob man auf den Server zugreifen kann
+        //GET: Um Antwort zurück zu bekommen
+        
+         _response.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
+        _response.setHeader('Access-Control-Allow-Headers', '*');
+        
+        //Aus string ein Objekt machen
+        let query: AssocStringString = Url.parse(_request.url, true).query;
+        //console.log(query);
+        
+        _response.write("Hallo");
         
         
-        for (let key in query) 
-            //console.log(query[key]);
-       
-        _response.write("Eingegebene Query-Information lautet: " + (query[key]) + "<br>");
-        _response.write("Das Ergebnis ist: " + (a + b));
-        //Lösung erscheint im Browserfenster mit "Das Ergebnis ist:"
+        //Schaut nach welche Methode angegeben wurde
+        //Wenn die Methode addStudent ist füge Student zur Liste hinzu
+        //Gebe als Antwort "Student added!"
+        if (query["method"] == "addStudent") {
+            let student = <Aufgabe6.Studi>JSON.parse(query["data"].toString());
+            studis[student.matrikel.toString()] = student;
+            _response.write("Student added!");
+            //_response.end();
+        }
+
+        //Wenn die Methode refreshStudents ist, gebe die Liste der Studenten als Antwort
+        //stringify: Objekt wird zum string
+        if (query["method"] == "refreshStudents") {
+            _response.write(JSON.stringify(studis));
+            //_response.end();
+        }
         
         _response.end();
     }

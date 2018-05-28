@@ -1,36 +1,50 @@
 "use strict";
-const Http = require("http"); //HTTP Modul wird eingebunden
-const Url = require("url"); //URL Modul wird eingebunden
-var Server;
-(function (Server) {
-    //Interface = Assoziatives Array mit key als SChl�ssel  
-    let port = process.env.PORT; //Globale Variable - representiert den Systemumgebungs-Status der Applikation, wenn sie starte
+//Bindet Url Modul mit ein
+const Url = require("url");
+//HTTP Objekt wird im Code erstellt
+//Interpreter sucht nach jedem m�glichen Import im http- Modul  und wird ihn einzeln an das http- Objekt im Code anh�ngen
+const Http = require("http");
+//namespace erstellen
+var Node;
+(function (Node) {
+    let studis = {};
+    // Todo: �ndern!
+    let port = process.env.PORT;
     if (port == undefined)
         port = 8100;
-    let server = Http.createServer(); //erzeugt Server-Objekt, mit dem weiter gearbeitet werden kann
-    server.addListener("listening", handleListen); //wenn Programm l�uft - sprich auf etwas "geh�rt wird", dann Funktionsaufruf von handleListen
-    server.addListener("request", handleRequest); //Server beibringen auf etwas zu h�ren
-    server.listen(port);
+    let server = Http.createServer();
+    server.addListener("listening", handleListen);
+    server.addListener("request", handleRequest);
+    server.listen(port); //Server soll auf gewissen port lauschen und damit wird der event-Listener listening gefeuert
     function handleListen() {
-        console.log("Ich höre?"); //Konsolenausgabe bzw Terminalausgabe  
+        console.log("Hallo");
     }
     function handleRequest(_request, _response) {
-        console.log("Ich höre Stimmen!");
-        // Ausgabe in der Konsole bzw. im Terminal
-        // Server h�rt, wenn localhost:8100 im Browser ge�ffnet ist;
-        // dann erscheint im Terminal "Ich h�re Stimmen"
-        let query = Url.parse(_request.url, true).query; //umwandeln von /?a=10&b=20 in ein JavaScript-Objekt
-        let a = parseInt(query["a"]); //a wird als Variable definiert
-        let b = parseInt(query["b"]); //b wird als Variable definiert
-        _response.setHeader("content-type", "text/html; charset=utf-8");
-        _response.setHeader("Access-Control-Allow-Origin", "*");
-        _response.write("Ich habe dich gehört<br/>");
-        for (let key in query)
-            //console.log(query[key]);
-            _response.write("Eingegebene Query-Information lautet: " + (query[key]) + "<br>");
-        _response.write("Das Ergebnis ist: " + (a + b));
-        //L�sung erscheint im Browserfenster mit "Das Ergebnis ist:"
+        //Die Headers sind dazu da um von anderen Servern zugreifen zu k�nnen
+        _response.setHeader('Access-Control-Allow-Origin', '*'); //* = alle; Sicherheitsfeature, jeder kann darauf zugreifen
+        _response.setHeader('Access-Control-Request-Method', '*'); //
+        //Options: Um abzufragen, ob man auf den Server zugreifen kann
+        //GET: Um Antwort zur�ck zu bekommen
+        _response.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
+        _response.setHeader('Access-Control-Allow-Headers', '*');
+        //Aus string ein Objekt machen
+        let query = Url.parse(_request.url, true).query;
+        //console.log(query);
+        _response.write("Hallo");
+        //Schaut nach welche Methode angegeben wurde
+        //Wenn die Methode addStudent ist f�ge Student zur Liste hinzu
+        //Gebe als Antwort "Student added!"
+        if (query["method"] == "addStudent") {
+            let student = JSON.parse(query["data"].toString());
+            studis[student.matrikel.toString()] = student;
+            _response.write("Student added!");
+        }
+        //Wenn die Methode refreshStudents ist, gebe die Liste der Studenten als Antwort
+        //stringify: Objekt wird zum string
+        if (query["method"] == "refreshStudents") {
+            _response.write(JSON.stringify(studis));
+        }
         _response.end();
     }
-})(Server || (Server = {}));
+})(Node || (Node = {}));
 //# sourceMappingURL=Server.js.map
