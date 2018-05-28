@@ -38,13 +38,11 @@ var Node;
             let student = JSON.parse(query["data"].toString());
             studis[student.matrikel.toString()] = student;
             _response.write("Student added!");
-            _response.end();
         }
         //Wenn die Methode refreshStudents ist, gebe die Liste der Studenten als Antwort
         //stringify: Objekt wird zum string
         if (query["method"] == "refreshStudents") {
             _response.write(JSON.stringify(studis));
-            _response.end();
         }
         _response.end();
     }
