@@ -23,19 +23,19 @@ namespace Node {
     server.addListener( "listening", handleListen );
 
     server.addListener( "request", handleRequest );
-    server.listen( port );
+    server.listen( port ); //Server soll auf gewissen port lauschen und damit wird der event-Listener listening gefeuert
 
 
     function handleListen(): void {
-
+        console.log("Hallo");
     }
 
     function handleRequest( _request: Http.IncomingMessage, _response: Http.ServerResponse ): void {
         
         //Die Headers sind dazu da um von anderen Servern zugreifen zu können
         
-        _response.setHeader('Access-Control-Allow-Origin', '*');
-        _response.setHeader('Access-Control-Request-Method', '*');
+        _response.setHeader('Access-Control-Allow-Origin', '*'); //* = alle; Sicherheitsfeature, jeder kann darauf zugreifen
+        _response.setHeader('Access-Control-Request-Method', '*'); //
         
         //Options: Um abzufragen, ob man auf den Server zugreifen kann
         //GET: Um Antwort zurück zu bekommen
@@ -46,6 +46,9 @@ namespace Node {
         //Aus string ein Objekt machen
         let query: AssocStringString = Url.parse(_request.url, true).query;
         //console.log(query);
+        
+        _response.write("Hallo");
+        
         
         //Schaut nach welche Methode angegeben wurde
         //Wenn die Methode addStudent ist füge Student zur Liste hinzu
@@ -63,5 +66,7 @@ namespace Node {
             _response.write(JSON.stringify(studis));
             _response.end();
         }
+        
+        _response.end();
     }
 }

@@ -15,13 +15,14 @@ var Node;
     let server = Http.createServer();
     server.addListener("listening", handleListen);
     server.addListener("request", handleRequest);
-    server.listen(port);
+    server.listen(port); //Server soll auf gewissen port lauschen und damit wird der event-Listener listening gefeuert
     function handleListen() {
+        console.log("Hallo");
     }
     function handleRequest(_request, _response) {
         //Die Headers sind dazu da um von anderen Servern zugreifen zu k�nnen
-        _response.setHeader('Access-Control-Allow-Origin', '*');
-        _response.setHeader('Access-Control-Request-Method', '*');
+        _response.setHeader('Access-Control-Allow-Origin', '*'); //* = alle; Sicherheitsfeature, jeder kann darauf zugreifen
+        _response.setHeader('Access-Control-Request-Method', '*'); //
         //Options: Um abzufragen, ob man auf den Server zugreifen kann
         //GET: Um Antwort zur�ck zu bekommen
         _response.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
@@ -29,6 +30,7 @@ var Node;
         //Aus string ein Objekt machen
         let query = Url.parse(_request.url, true).query;
         //console.log(query);
+        _response.write("Hallo");
         //Schaut nach welche Methode angegeben wurde
         //Wenn die Methode addStudent ist f�ge Student zur Liste hinzu
         //Gebe als Antwort "Student added!"
@@ -44,6 +46,7 @@ var Node;
             _response.write(JSON.stringify(studis));
             _response.end();
         }
+        _response.end();
     }
 })(Node || (Node = {}));
 //# sourceMappingURL=Server.js.map
