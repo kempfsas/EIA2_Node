@@ -35,13 +35,13 @@ namespace Node {
         //Die Headers sind dazu da um von anderen Servern zugreifen zu können
         
         _response.setHeader('Access-Control-Allow-Origin', '*'); //* = alle; Sicherheitsfeature, jeder kann darauf zugreifen
-        _response.setHeader('Access-Control-Request-Method', '*'); //
+        //_response.setHeader('Access-Control-Request-Method', '*'); //
         
         //Options: Um abzufragen, ob man auf den Server zugreifen kann
         //GET: Um Antwort zurück zu bekommen
         
-         _response.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
-        _response.setHeader('Access-Control-Allow-Headers', '*');
+         //_response.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
+        //_response.setHeader('Access-Control-Allow-Headers', '*');
         
         //Aus string ein Objekt machen
         let query: AssocStringString = Url.parse(_request.url, true).query;
@@ -62,10 +62,23 @@ namespace Node {
 
         //Wenn die Methode refreshStudents ist, gebe die Liste der Studenten als Antwort
         //stringify: Objekt wird zum string
-        if (query["method"] == "refreshStudents") {
+        else if (query["method"] == "refreshStudents") {
             _response.write(JSON.stringify(studis));
             //_response.end();
         }
+        
+        else if (query["method"] == "searchStudent") {
+            let matrikel = (<string>query["data"]).substring(1, query["data"].length - 1);
+            let student = studis[matrikel];
+            
+            if (student != undefined) {
+                _response.write(JSON.stringify(student));
+                }
+            
+            else {
+                _response.write("undefined");
+                }
+            }
         
         _response.end();
     }
