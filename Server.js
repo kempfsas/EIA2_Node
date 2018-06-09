@@ -1,58 +1,87 @@
 "use strict";
-//Bindet Url Modul mit ein
-const Url = require("url");
-//HTTP Objekt wird im Code erstellt
-//Interpreter sucht nach jedem m�glichen Import im http- Modul  und wird ihn einzeln an das http- Objekt im Code anh�ngen
+const Database = require("./Database");
 const Http = require("http");
-//namespace erstellen
-var Node;
-(function (Node) {
-    let studis = {};
-    // Todo: �ndern!
-    let port = process.env.PORT;
-    if (port == undefined)
-        port = 8100;
-    let server = Http.createServer();
-    server.addListener("listening", handleListen);
-    server.addListener("request", handleRequest);
-    server.listen(port); //Server soll auf gewissen port lauschen und damit wird der event-Listener listening gefeuert
-    function handleListen() {
-        console.log("Hallo");
+const Url = require("url");
+let port = process.env.PORT;
+if (port == undefined)
+    port = 8100;
+let server = Http.createServer();
+server.addListener("request", handleResponse);
+server.addListener("request", handleRequest);
+server.listen(port);
+function respond(_response, _text) {
+    _response.setHeader("content-type", "text/html; charset=utf-8");
+    _response.setHeader("Access-Control-Allow-Origin", "*");
+    _response.write(_text);
+    _response.end();
+}
+function handleResponse(_response, _text) {
+    _response.setHeader("content-type", "text/html; charset=utf-8");
+    _response.setHeader("Access-Control-Allow-Origin", "*");
+    _response.write(_text);
+    _response.end();
+}
+//Switch Abfrage mit den verschiednene F�llen und den entsprechenden Funktionen, die ausgef�hrt werden sollen      
+function handleRequest(_request, _response) {
+    let query = Url.parse(_request.url, true).query;
+    console.log(query["command"]);
+    if (query["command"]) {
+        switch (query["command"]) {
+            case "insert":
+                insert(query, _response);
+                break;
+            case "refresh":
+                refresh(_response);
+                break;
+            case "search":
+                search(query, _response);
+                break;
+            default:
+                error();
+        }
     }
-    function handleRequest(_request, _response) {
-        //Die Headers sind dazu da um von anderen Servern zugreifen zu k�nnen
-        _response.setHeader('Access-Control-Allow-Origin', '*'); //* = alle; Sicherheitsfeature, jeder kann darauf zugreifen
-        //_response.setHeader('Access-Control-Request-Method', '*'); //
-        //Options: Um abzufragen, ob man auf den Server zugreifen kann
-        //GET: Um Antwort zur�ck zu bekommen
-        //_response.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
-        //_response.setHeader('Access-Control-Allow-Headers', '*');
-        //Aus string ein Objekt machen
-        let query = Url.parse(_request.url, true).query;
-        //console.log(query);
-        _response.write("Hallo");
-        //Schaut nach welche Methode angegeben wurde
-        //Wenn die Methode addStudent ist f�ge Student zur Liste hinzu
-        //Gebe als Antwort "Student added!"
-        if (query["method"] == "addStudent") {
-            let student = JSON.parse(query["data"].toString());
-            studis[student.matrikel.toString()] = student;
-            _response.write("Student added!");
-        }
-        else if (query["method"] == "refreshStudents") {
-            _response.write(JSON.stringify(studis));
-        }
-        else if (query["method"] == "searchStudent") {
-            let matrikel = query["data"].substring(1, query["data"].length - 1);
-            let student = studis[matrikel];
-            if (student != undefined) {
-                _response.write(JSON.stringify(student));
-            }
-            else {
-                _response.write("undefined");
-            }
-        }
-        _response.end();
+    _response.end();
+}
+//Daten des Studi werden als Objekte �bergeben      
+function insert(query, _response) {
+    let obj = JSON.parse(query["data"]);
+    let _firstname = obj.firstname;
+    let _name = obj.name;
+    let matrikel = obj.matrikel.toString();
+    let _age = obj.age;
+    let _gender = obj.gender;
+    let _course = obj.course;
+    let studi;
+    studi = {
+        firstname: _firstname,
+        name: _name,
+        matrikel: parseInt(matrikel),
+        age: _age,
+        gender: _gender,
+        course: _course,
+    };
+    Database.insert(studi);
+    handleResponse(_response, "Daten wurden gespeichert"); //R�ckmeldung f�r den User
+}
+function refresh(_response) {
+    //console.log(studiHomoAssoc);
+    Database.findAll(function (json) {
+        handleResponse(_response, json);
+    });
+}
+function search(query, _response) {
+    let studi = studiHomoAssoc[query["searchFor"]];
+    if (studi) {
+        let line = query["searchFor"] + ": ";
+        line += studi.course + ", " + studi.name + ", " + studi.firstname + ", " + studi.age + " Jahre ";
+        line += studi.gender ? "(M)" : "(F)";
+        _response.write(line);
     }
-})(Node || (Node = {}));
+    else {
+        _response.write("No match found");
+    }
+}
+function error() {
+    alert("Error");
+}
 //# sourceMappingURL=Server.js.map

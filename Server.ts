@@ -1,85 +1,99 @@
-//Bindet Url Modul mit ein
+
+import * as Database from "./Database";
+import * as Http from "http";
 import * as Url from "url";
 
-//HTTP Objekt wird im Code erstellt
-//Interpreter sucht nach jedem möglichen Import im http- Modul  und wird ihn einzeln an das http- Objekt im Code anhängen
-import * as Http from "http";
 
-//namespace erstellen
-namespace Node {
-    let studis: Aufgabe6.Studis = {};
+let port: number = process.env.PORT;
+if (port == undefined)
+    port = 8100;
 
-    interface AssocStringString {
-        [key: string]: string | string[];
-    }
+let server: Http.Server = Http.createServer();
+server.addListener("request", handleResponse);
+server.addListener("request", handleRequest);
+server.listen(port);
 
-    // Todo: Ändern!
-    let port: number = process.env.PORT;
+function respond(_response: Http.ServerResponse, _text: string): void {
+    _response.setHeader("content-type", "text/html; charset=utf-8");
+    _response.setHeader("Access-Control-Allow-Origin", "*");
+    _response.write(_text);
+    _response.end();
+}
 
-    if ( port == undefined ) 
-        port = 8100; 
+function handleResponse(_response: Http.ServerResponse, _text: string): void {
+    _response.setHeader("content-type", "text/html; charset=utf-8");
+    _response.setHeader("Access-Control-Allow-Origin", "*");
+    _response.write(_text);
+    _response.end();
+}
 
-    let server: Http.Server = Http.createServer();
-    server.addListener( "listening", handleListen );
+//Switch Abfrage mit den verschiednene Fällen und den entsprechenden Funktionen, die ausgeführt werden sollen      
+function handleRequest(_request: Http.IncomingMessage, _response: Http.ServerResponse): void {
+    let query: AssocStringString = Url.parse(_request.url, true).query;
+    console.log(query["command"]);
+    if (query["command"]) {
+        switch (query["command"]) {
+           
+            case "insert":
+                insert(query, _response);
+                break;
 
-    server.addListener( "request", handleRequest );
-    server.listen( port ); //Server soll auf gewissen port lauschen und damit wird der event-Listener listening gefeuert
+            case "refresh":
+                refresh(_response);
+                break;
 
+            case "search":
+                search(query, _response);
+                break;
 
-    function handleListen(): void {
-        console.log("Hallo");
-    }
-
-    function handleRequest( _request: Http.IncomingMessage, _response: Http.ServerResponse ): void {
-        
-        //Die Headers sind dazu da um von anderen Servern zugreifen zu können
-        
-        _response.setHeader('Access-Control-Allow-Origin', '*'); //* = alle; Sicherheitsfeature, jeder kann darauf zugreifen
-        //_response.setHeader('Access-Control-Request-Method', '*'); //
-        
-        //Options: Um abzufragen, ob man auf den Server zugreifen kann
-        //GET: Um Antwort zurück zu bekommen
-        
-         //_response.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
-        //_response.setHeader('Access-Control-Allow-Headers', '*');
-        
-        //Aus string ein Objekt machen
-        let query: AssocStringString = Url.parse(_request.url, true).query;
-        //console.log(query);
-        
-        _response.write("Hallo");
-        
-        
-        //Schaut nach welche Methode angegeben wurde
-        //Wenn die Methode addStudent ist füge Student zur Liste hinzu
-        //Gebe als Antwort "Student added!"
-        if (query["method"] == "addStudent") {
-            let student = <Aufgabe6.Studi>JSON.parse(query["data"].toString());
-            studis[student.matrikel.toString()] = student;
-            _response.write("Student added!");
-            //_response.end();
+            default:
+                error();
         }
-
-        //Wenn die Methode refreshStudents ist, gebe die Liste der Studenten als Antwort
-        //stringify: Objekt wird zum string
-        else if (query["method"] == "refreshStudents") {
-            _response.write(JSON.stringify(studis));
-            //_response.end();
-        }
-        
-        else if (query["method"] == "searchStudent") {
-            let matrikel = (<string>query["data"]).substring(1, query["data"].length - 1);
-            let student = studis[matrikel];
-            
-            if (student != undefined) {
-                _response.write(JSON.stringify(student));
-                }
-            
-            else {
-                _response.write("undefined");
-                }
-            }
-        
-        _response.end();
     }
+    _response.end();
+}
+
+//Daten des Studi werden als Objekte übergeben      
+function insert(query: AssocStringString, _response: Http.ServerResponse): void {
+    let obj: Studi = JSON.parse(query["data"]);
+    let _firstname: string = obj.firstname;
+    let _name: string = obj.name;
+    let matrikel: string = obj.matrikel.toString();
+    let _age: number = obj.age;
+    let _gender: boolean = obj.gender;
+    let _course: string = obj.course;
+    let studi: Studi;
+    studi = {
+        firstname: _firstname,
+        name: _name,
+        matrikel: parseInt(matrikel),
+        age: _age,
+        gender: _gender,
+        course: _course,
+    };
+    Database.insert(studi);
+    handleResponse(_response, "Daten wurden gespeichert"); //Rückmeldung für den User
+}
+
+function refresh(_response: Http.ServerResponse): void {
+    //console.log(studiHomoAssoc);
+    Database.findAll(function(json: string): void {
+    handleResponse(_response, json);
+    });
+}
+
+function search(query: AssocStringString, _response: Http.ServerResponse): void {
+    let studi: Studi = studiHomoAssoc[query["searchFor"]];
+    if (studi) {
+        let line: string = query["searchFor"] + ": ";
+        line += studi.course + ", " + studi.name + ", " + studi.firstname + ", " + studi.age + " Jahre ";
+        line += studi.gender ? "(M)" : "(F)";
+        _response.write(line);
+    } else {
+        _response.write("No match found");
+    }
+}
+
+function error(): void {
+    alert("Error");
 }
