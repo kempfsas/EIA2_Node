@@ -22,13 +22,13 @@ function handleConnect(_e, _db) {
         students = db.collection("students");
     }
 }
-function insert(_students) {
-    let _name = _students.name;
-    let _firstname = _students.firstname;
-    let matrikel = _students.matrikel.toString();
-    let _age = _students.age;
-    let _gender = _students.gender;
-    let _studiengang = _students.studiengang;
+function insert(_student) {
+    let _name = _student.name;
+    let _firstname = _student.firstname;
+    let matrikel = _student.matrikel.toString();
+    let _age = _student.age;
+    let _gender = _student.gender;
+    let _studiengang = _student.studiengang;
     let studi;
     studi = {
         name: _name,

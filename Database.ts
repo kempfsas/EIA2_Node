@@ -30,13 +30,13 @@ function handleConnect(_e: Mongo.MongoError, _db: Mongo.Db): void {
     }
 }
 
-export function insert(_students: Server.Studi): void {
-    let _name: string = _students.name;
-    let _firstname: string = _students.firstname;
-    let matrikel: string = _students.matrikel.toString();
-    let _age: number = _students.age;
-    let _gender: boolean = _students.gender;
-    let _studiengang: string = _students.studiengang;
+export function insert(_student: Server.Studi): void {
+    let _name: string = _student.name;
+    let _firstname: string = _student.firstname;
+    let matrikel: string = _student.matrikel.toString();
+    let _age: number = _student.age;
+    let _gender: boolean = _student.gender;
+    let _studiengang: string = _student.studiengang;
 
     let studi: Server.Studi;
     
