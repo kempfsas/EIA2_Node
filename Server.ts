@@ -109,7 +109,7 @@ function respond(_response: Http.ServerResponse, _text: string): void {
         }
     }
 
-}
+}*/
 
 
 export interface Studi {
@@ -127,4 +127,4 @@ export interface Studis {
 
 export interface Object {
     [key: string]: string;
-}*/
+}
