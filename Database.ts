@@ -54,8 +54,9 @@ export function findAll(_callback: Function): void {
                 line += studentArray[i].gender ? "male" : "female";
                 line += "\n";
             }
-            _callback(JSON.stringify(studentArray));
-        }
+            _callback(line);
+            }
+        
     }
 }
 

@@ -1,6 +1,7 @@
 import * as Http from "http";
 import * as Url from "url";
 import * as Database from "./Database";
+
 let port: number = process.env.PORT;
 if (port == undefined)
     port = 8200;
@@ -9,12 +10,12 @@ let server: Http.Server = Http.createServer();
 server.addListener("request", handleRequest);
 server.listen(port);
 
-function handleResponse(_response: Http.ServerResponse, _text: string): void {
+/*function handleResponse(_response: Http.ServerResponse, _text: string): void {
     _response.setHeader("content-type", "text/html; charset=utf-8");
     _response.setHeader("Access-Control-Allow-Origin", "*");
     _response.write(_text);
     _response.end();
-}
+}*/
 
 function handleRequest(_request: Http.IncomingMessage, _response: Http.ServerResponse): void {
     console.log("Ich höre Stimmen!");
@@ -31,9 +32,9 @@ function handleRequest(_request: Http.IncomingMessage, _response: Http.ServerRes
                 refresh(_response);
                 break;
 
-            /*case "search":
+            case "search":
                 search(query, _response);
-                break;*/
+                break;
 
             default:
                 error();
@@ -50,7 +51,9 @@ function insert(query: AssocStringString, _response: Http.ServerResponse): void 
     let _age: number = obj.age;
     let _gender: boolean = obj.gender;
     let _course: string = obj.course;
+    
     let studi: Studi;
+    
     studi = {
         name: _name,
         firstname: _firstname,
@@ -59,15 +62,17 @@ function insert(query: AssocStringString, _response: Http.ServerResponse): void 
         gender: _gender,
         course: _course
     };
+    
+    
     Database.insert(studi);
-    handleResponse(_response, "Daten wurden gespeichert");
+    handleResponse(_response, "Data received");
 }
 
 function refresh(_response: Http.ServerResponse): void {
     Database.findAll(function(json: string): void {
         handleResponse(_response, json);
     });
-    
+
     /*for (let matrikel in studiHomoAssoc) {
             // for-in-Schleife iteriert über die Schlüssel des assoziativen Arrays
             let studi: Studi = studiHomoAssoc[matrikel];
@@ -78,13 +83,21 @@ function refresh(_response: Http.ServerResponse): void {
 }*/
 }
 
-/*function search(query: Object, _response: Http.ServerResponse): void {
-let matrikelSearch: number = parseInt(query["searchFor"]);
-        Database.findStudent(matrikelSearch, function (json: string): void {
-        handleResponse(_response, json);    
-});
-}*/
+function search(query: Object, _response: Http.ServerResponse): void {
+    /*let matrikelSearch: number = parseInt(query["searchFor"]);
+    Database.findStudent(matrikelSearch, function(json: string): void {
+        handleResponse(_response, json);
+    });*/
+}
 
+    
 function error(): void {
     alert("Error");
+}
+
+function handleResponse(_response: Http.ServerResponse, _text: string): void {
+    _response.setHeader("content-type", "text/html; charset=utf-8");
+    _response.setHeader("Access-Control-Allow-Origin", "*");
+    _response.write(_text);
+    _response.end();
 }
