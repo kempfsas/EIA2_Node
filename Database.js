@@ -2,7 +2,7 @@
 const Mongo = require("mongodb");
 console.log("Database starting");
 let databaseURL = "mongodb://localhost:27017";
-let databaseName = "database_mongodb_kempfsas";
+let databaseName = "Test";
 let db;
 let students;
 // wenn wir auf heroku sind...
