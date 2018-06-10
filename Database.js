@@ -22,49 +22,34 @@ function handleConnect(_e, _db) {
         students = db.collection("students");
     }
 }
-function insert(_student) {
-    let _name = _student.name;
-    let _firstname = _student.firstname;
-    let matrikel = _student.matrikel.toString();
-    let _age = _student.age;
-    let _gender = _student.gender;
-    let _studiengang = _student.studiengang;
-    let studi;
-    studi = {
-        name: _name,
-        firstname: _firstname,
-        matrikel: parseInt(matrikel),
-        age: _age,
-        gender: _gender,
-        studiengang: _studiengang
-    };
-    students.insertOne(studi, handleInsert);
+function insert(_doc) {
+    students.insertOne(_doc, handleInsert);
 }
 exports.insert = insert;
 function handleInsert(_e) {
     console.log("Database insertion returned -> " + _e);
 }
 function findAll(_callback) {
-    let cursor = students.find();
-    cursor.toArray((_e, _result) => {
+    var cursor = students.find();
+    cursor.toArray(prepareAnswer);
+    function prepareAnswer(_e, studentArray) {
         if (_e)
-            _callback("Da war ein Fehler " + _e, false);
+            _callback("Error" + _e);
         else
-            _callback(JSON.stringify(_result), true);
-    });
+            _callback(JSON.stringify(studentArray));
+    }
 }
 exports.findAll = findAll;
-function findStudent(_callback, matrikel) {
-    let cursor = students.find({ "matrikel": matrikel });
-    cursor.toArray((_e, _result) => {
+/*export function findStudent(_callback: Function, matrikel: number) {
+    let cursor: Mongo.Cursor = students.find({"matrikel": matrikel});
+    cursor.toArray((_e: Mongo.MongoError, _result: Server.Studi[]) => {
         if (_e)
             _callback("Ich mag Fehler nicht :( " + _e, false);
         else {
             if (_result.length >= 1) {
-                _callback(JSON.stringify(_result[0]), true);
+                _callback(JSON.stringify(_result[0]), true)
             }
         }
-    });
-}
-exports.findStudent = findStudent;
+    })
+}*/ 
 //# sourceMappingURL=Database.js.map

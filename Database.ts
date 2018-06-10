@@ -30,29 +30,8 @@ function handleConnect(_e: Mongo.MongoError, _db: Mongo.Db): void {
     }
 }
 
-export function insert(_student: Server.Studi): void {
-    let _name: string = _student.name;
-    let _firstname: string = _student.firstname;
-    let matrikel: string = _student.matrikel.toString();
-    let _age: number = _student.age;
-    let _gender: boolean = _student.gender;
-    let _studiengang: string = _student.studiengang;
-
-    let studi: Server.Studi;
-    
-     studi = {
-        name: _name,
-        firstname: _firstname,
-        matrikel: parseInt(matrikel),
-        age: _age,
-        gender: _gender,
-        studiengang: _studiengang
-    };
-
-    
-    
-    
-    students.insertOne(studi, handleInsert);
+export function insert(_doc: Studi): void {
+    students.insertOne(_doc, handleInsert);
 }
 
 function handleInsert( _e: Mongo.MongoError ): void {
@@ -61,17 +40,19 @@ function handleInsert( _e: Mongo.MongoError ): void {
 
 
 export function findAll(_callback: Function): void {
-    let cursor: Mongo.Cursor = students.find();
-    cursor.toArray((_e: Mongo.MongoError, _result: Server.Studi[]) => {
+    var cursor: Mongo.Cursor = students.find();
+    cursor.toArray(prepareAnswer);
+        
+    function prepareAnswer(_e: Mongo.MongoError, studentArray: Studi[]): void {
         if (_e)
-            _callback("Da war ein Fehler " + _e, false);
+            _callback("Error" + _e);
         else
-            _callback(JSON.stringify(_result), true)
-    })
+            _callback(JSON.stringify(studentArray));
+}
 
 }
 
-export function findStudent(_callback: Function, matrikel: number) {
+/*export function findStudent(_callback: Function, matrikel: number) {
     let cursor: Mongo.Cursor = students.find({"matrikel": matrikel});
     cursor.toArray((_e: Mongo.MongoError, _result: Server.Studi[]) => {
         if (_e)
@@ -82,6 +63,4 @@ export function findStudent(_callback: Function, matrikel: number) {
             }
         }
     })
-}
-
-
+}*/
