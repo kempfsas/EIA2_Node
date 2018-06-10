@@ -1,130 +1,77 @@
-
 import * as Http from "http";
 import * as Url from "url";
 import * as Database from "./Database";
-
-
-
-let server: Http.Server;
 let port: number = process.env.PORT;
+if (port == undefined)
+    port = 8200;
 
-startServer();
+let server: Http.Server = Http.createServer();
+server.addListener("request", handleRequest);
+server.listen(port);
 
-function startServer() {
-
-    if (port == undefined)
-        port = 8100;
-
-    let server = Http.createServer();
-    server.addListener("request", handleRequest);
-    server.addListener("listening", handleListen);
-
-    
-    server.listen(port);
-}
-
-function handleListen() {
-    console.log('listening on port ' + port);
-}
-
-
-function handleRequest(_request: Http.IncomingMessage, _response: Http.ServerResponse) {
-    console.log("Request received");
+function handleResponse(_response: Http.ServerResponse, _text: string): void {
     _response.setHeader("content-type", "text/html; charset=utf-8");
     _response.setHeader("Access-Control-Allow-Origin", "*");
-
-    let query: AssocStringString = Url.parse(_request.url, true).query;
-    var command: string = query["command"];
-    console.log(query["command"]);
-
-    if (query["command"]) {
-        switch (query["command"]) {
-            case "insert":
-                Database.insert(JSON.parse(query["data"]));
-                _response.end();
-                break;
-
-            case "findAll":
-                Database.findAll(function(studis: string, worked: boolean) {
-                    if (worked) {
-                        _response.write(studis);
-                        _response.end();
-                    }
-
-                    else
-                        console.log(studis);
-                });
-                break;
-
-            case "find":
-                Database.findStudent(function (studi: string, worked: boolean) {
-                    if (worked){
-                        _response.write(studi);
-                        _response.end();
-                    }
-                    else
-                        console.log(studi);
-                }, parseInt(query["data"]))
-        }
-    }
-
-}
-
-
-function respond(_response: Http.ServerResponse, _text: string): void {
-    //console.log("Preparing response: " + _text);
-    _response.setHeader("Access-Control-Allow-Origin", "*");
-    _response.setHeader("content-type", "text/html; charset=utf-8");
     _response.write(_text);
     _response.end();
 }
-    //if (query["command"]) {
-        /*switch (query["command"]) {
+
+function handleRequest(_request: Http.IncomingMessage, _response: Http.ServerResponse): void {
+    console.log("Ich höre Stimmen!");
+    let query: AssocStringString = Url.parse(_request.url, true).query;
+    console.log(query["command"]);
+    if (query["command"]) {
+        switch (query["command"]) {
+
             case "insert":
-                Database.insert(JSON.parse(query["data"]));
-                _response.end();
+                insert(query, _response);
                 break;
 
-            case "findAll":
-                Database.findAll(function(studis: string, worked: boolean) {
-                    if (worked) {
-                        _response.write(studis);
-                        _response.end();
-                    }
-
-                    else
-                        console.log(studis);
-                });
+            case "refresh":
+                refresh(_response);
                 break;
 
-            case "find":
-                Database.findStudent(function (studi: string, worked: boolean) {
-                    if (worked){
-                        _response.write(studi);
-                        _response.end();
-                    }
-                    else
-                        console.log(studi);
-                }, parseInt(query["data"]))
+            case "search":
+                //search(query, _response);
+                break;
+
+            default:
+                error();
         }
     }
-
-}*/
-
-
-export interface Studi {
-    name: string;
-    firstname: string;
-    studiengang: string;
-    matrikel: number;
-    age: number;
-    gender: boolean;
 }
 
-export interface Studis {
-    [matrikel: string]: Studi;
+function insert(query: AssocStringString, _response: Http.ServerResponse): void {
+    let obj: Studi = JSON.parse(query["data"]);
+    let _name: string = obj.name;
+    let _firstname: string = obj.firstname;
+    let matrikel: string = obj.matrikel.toString();
+    let _age: number = obj.age;
+    let _gender: boolean = obj.gender;
+    let _studiengang: string = obj.studiengang;
+    let studi: Studi;
+    studi = {
+        name: _name,
+        firstname: _firstname,
+        matrikel: parseInt(matrikel),
+        age: _age,
+        gender: _gender,
+        studiengang: _studiengang
+    };
+    Database.insert(studi);
+    handleResponse(_response, "Daten wurden gespeichert");
 }
 
-export interface Object {
-    [key: string]: string;
+function refresh(_response: Http.ServerResponse): void {
+    Database.findAll(function(json: string): void {
+        handleResponse(_response, json);
+    });
+}
+
+function search(query: Object, _response: Http.ServerResponse): void {
+// noch nicht umgeschrieben
+}
+
+function error(): void {
+    alert("Error");
 }
