@@ -31,14 +31,15 @@ function handleRequest(_request: Http.IncomingMessage, _response: Http.ServerRes
                 refresh(_response);
                 break;
 
-            case "search":
-                //search(query, _response);
-                break;
+            /*case "search":
+                search(query, _response);
+                break;*/
 
             default:
                 error();
         }
     }
+    _response.end();
 }
 
 function insert(query: AssocStringString, _response: Http.ServerResponse): void {
@@ -48,7 +49,7 @@ function insert(query: AssocStringString, _response: Http.ServerResponse): void 
     let matrikel: string = obj.matrikel.toString();
     let _age: number = obj.age;
     let _gender: boolean = obj.gender;
-    let _studiengang: string = obj.studiengang;
+    let _course: string = obj.course;
     let studi: Studi;
     studi = {
         name: _name,
@@ -56,7 +57,7 @@ function insert(query: AssocStringString, _response: Http.ServerResponse): void 
         matrikel: parseInt(matrikel),
         age: _age,
         gender: _gender,
-        studiengang: _studiengang
+        course: _course
     };
     Database.insert(studi);
     handleResponse(_response, "Daten wurden gespeichert");
@@ -66,11 +67,23 @@ function refresh(_response: Http.ServerResponse): void {
     Database.findAll(function(json: string): void {
         handleResponse(_response, json);
     });
+    
+    /*for (let matrikel in studiHomoAssoc) {
+            // for-in-Schleife iteriert über die Schlüssel des assoziativen Arrays
+            let studi: Studi = studiHomoAssoc[matrikel];
+            let line: string = matrikel + ": ";
+            line += studi.course + ", " + studi.name + ", " + studi.firstname + ", " + studi.age + ", ";
+            line += studi.gender ? "male" : "female"; 
+            _response.write(line + "\n");
+}*/
 }
 
-function search(query: Object, _response: Http.ServerResponse): void {
-// noch nicht umgeschrieben
-}
+/*function search(query: Object, _response: Http.ServerResponse): void {
+let matrikelSearch: number = parseInt(query["searchFor"]);
+        Database.findStudent(matrikelSearch, function (json: string): void {
+        handleResponse(_response, json);    
+});
+}*/
 
 function error(): void {
     alert("Error");

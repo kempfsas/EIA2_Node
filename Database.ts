@@ -14,7 +14,7 @@ if (process.env.NODE_ENV == "production") {
     //    databaseURL = "mongodb://username:password@hostname:port/database";
     databaseURL = "mongodb://testuser:testpasswort1@ds253959.mlab.com:53959/database_mongodb_kempfsas";
     databaseName = "database_mongodb_kempfsas";
-} 
+}
 
 // handleConnect wird aufgerufen wenn der Versuch, die Connection zur Datenbank herzustellen, erfolgte
 Mongo.MongoClient.connect(databaseURL, handleConnect);
@@ -34,22 +34,48 @@ export function insert(_doc: Studi): void {
     students.insertOne(_doc, handleInsert);
 }
 
-function handleInsert( _e: Mongo.MongoError ): void {
-    console.log( "Database insertion returned -> " + _e );
+function handleInsert(_e: Mongo.MongoError): void {
+    console.log("Database insertion returned -> " + _e);
 }
 
 
 export function findAll(_callback: Function): void {
     var cursor: Mongo.Cursor = students.find();
     cursor.toArray(prepareAnswer);
-        
+
     function prepareAnswer(_e: Mongo.MongoError, studentArray: Studi[]): void {
-        if (_e)
+        if (_e) {
             _callback("Error" + _e);
-        else
+        }
+        else {
+            let line: string = "";
+            for (let i: number = 0; i < studentArray.length; i++) {
+                line += studentArray[i].matrikel + ": " + studentArray[i].course + ", " + studentArray[i].name + ", " + studentArray[i].firstname + ", " + studentArray[i].age + ", ";
+                line += studentArray[i].gender ? "male" : "female";
+                line += "\n";
+            }
             _callback(JSON.stringify(studentArray));
+        }
+    }
 }
 
+export function findStudent(matrikelSearch: number, _callback: Function): void {
+    var myCursor: Mongo.Cursor = students.find({ "matrikel": matrikelSearch }).limit(1);
+    myCursor.next(prepareStudent);
+
+    function prepareStudent(_e: Mongo.MongoError, studi: Studi): void {
+        if (_e) {
+            _callback("Error" + _e);
+        }
+
+        if (studi) {
+            let line: string = studi.matrikel + ": " + studi.course + ", " + studi.name + ", " + studi.firstname + ", " + studi.age + ", ";
+            line += studi.gender ? "male" : "female";
+            _callback(line);
+        } else {
+            _callback("No Match");
+        }
+    }
 }
 
 /*export function findStudent(_callback: Function, matrikel: number) {

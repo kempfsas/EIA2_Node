@@ -33,13 +33,39 @@ function findAll(_callback) {
     var cursor = students.find();
     cursor.toArray(prepareAnswer);
     function prepareAnswer(_e, studentArray) {
-        if (_e)
+        if (_e) {
             _callback("Error" + _e);
-        else
+        }
+        else {
+            let line = "";
+            for (let i = 0; i < studentArray.length; i++) {
+                line += studentArray[i].matrikel + ": " + studentArray[i].course + ", " + studentArray[i].name + ", " + studentArray[i].firstname + ", " + studentArray[i].age + ", ";
+                line += studentArray[i].gender ? "male" : "female";
+                line += "\n";
+            }
             _callback(JSON.stringify(studentArray));
+        }
     }
 }
 exports.findAll = findAll;
+function findStudent(matrikelSearch, _callback) {
+    var myCursor = students.find({ "matrikel": matrikelSearch }).limit(1);
+    myCursor.next(prepareStudent);
+    function prepareStudent(_e, studi) {
+        if (_e) {
+            _callback("Error" + _e);
+        }
+        if (studi) {
+            let line = studi.matrikel + ": " + studi.course + ", " + studi.name + ", " + studi.firstname + ", " + studi.age + ", ";
+            line += studi.gender ? "male" : "female";
+            _callback(line);
+        }
+        else {
+            _callback("No Match");
+        }
+    }
+}
+exports.findStudent = findStudent;
 /*export function findStudent(_callback: Function, matrikel: number) {
     let cursor: Mongo.Cursor = students.find({"matrikel": matrikel});
     cursor.toArray((_e: Mongo.MongoError, _result: Server.Studi[]) => {

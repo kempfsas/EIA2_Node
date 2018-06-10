@@ -6,7 +6,7 @@ interface Studi {
     name: string;
     firstname: string;
     matrikel: number;
-    studiengang: string;
+    course: string; 
     age: number;
     gender: boolean;
 }

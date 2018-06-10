@@ -26,13 +26,14 @@ function handleRequest(_request, _response) {
             case "refresh":
                 refresh(_response);
                 break;
-            case "search":
-                //search(query, _response);
-                break;
+            /*case "search":
+                search(query, _response);
+                break;*/
             default:
                 error();
         }
     }
+    _response.end();
 }
 function insert(query, _response) {
     let obj = JSON.parse(query["data"]);
@@ -41,7 +42,7 @@ function insert(query, _response) {
     let matrikel = obj.matrikel.toString();
     let _age = obj.age;
     let _gender = obj.gender;
-    let _studiengang = obj.studiengang;
+    let _course = obj.course;
     let studi;
     studi = {
         name: _name,
@@ -49,7 +50,7 @@ function insert(query, _response) {
         matrikel: parseInt(matrikel),
         age: _age,
         gender: _gender,
-        studiengang: _studiengang
+        course: _course
     };
     Database.insert(studi);
     handleResponse(_response, "Daten wurden gespeichert");
@@ -58,10 +59,21 @@ function refresh(_response) {
     Database.findAll(function (json) {
         handleResponse(_response, json);
     });
+    /*for (let matrikel in studiHomoAssoc) {
+            // for-in-Schleife iteriert �ber die Schl�ssel des assoziativen Arrays
+            let studi: Studi = studiHomoAssoc[matrikel];
+            let line: string = matrikel + ": ";
+            line += studi.course + ", " + studi.name + ", " + studi.firstname + ", " + studi.age + ", ";
+            line += studi.gender ? "male" : "female";
+            _response.write(line + "\n");
+}*/
 }
-function search(query, _response) {
-    // noch nicht umgeschrieben
-}
+/*function search(query: Object, _response: Http.ServerResponse): void {
+let matrikelSearch: number = parseInt(query["searchFor"]);
+        Database.findStudent(matrikelSearch, function (json: string): void {
+        handleResponse(_response, json);
+});
+}*/
 function error() {
     alert("Error");
 }
