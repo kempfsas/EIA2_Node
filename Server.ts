@@ -75,14 +75,14 @@ function refresh(_response: Http.ServerResponse): void {
         handleResponse(_response, json);
     });
 
-    /*for (let matrikel in studiHomoAssoc) {
+    for (let matrikel in studiHomoAssoc) {
             // for-in-Schleife iteriert über die Schlüssel des assoziativen Arrays
             let studi: Studi = studiHomoAssoc[matrikel];
             let line: string = matrikel + ": ";
             line += studi.course + ", " + studi.name + ", " + studi.firstname + ", " + studi.age + ", ";
             line += studi.gender ? "male" : "female"; 
             _response.write(line + "\n");
-}*/
+}
 }
 
 function search(query: Object, _response: Http.ServerResponse): void {
