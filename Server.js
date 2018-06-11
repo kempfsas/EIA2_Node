@@ -77,7 +77,7 @@ function search(query, _response) {
     });*/
 }
 function error() {
-    alert("Error");
+    //alert("Error");
 }
 /*function handleResponse(_response: Http.ServerResponse, _text: string): void {
     _response.setHeader("content-type", "text/html; charset=utf-8");

@@ -94,7 +94,7 @@ function search(query: Object, _response: Http.ServerResponse): void {
 
     
 function error(): void {
-    alert("Error");
+    //alert("Error");
 }
 
 /*function handleResponse(_response: Http.ServerResponse, _text: string): void {
