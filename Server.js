@@ -35,7 +35,7 @@ function handleRequest(_request, _response) {
                 error();
         }
     }
-    _response.end();
+    //_response.end();
 }
 function insert(query, _response) {
     let obj = JSON.parse(query["data"]);
@@ -61,20 +61,20 @@ function refresh(_response) {
     Database.findAll(function (json) {
         handleResponse(_response, json);
     });
-    for (let matrikel in studiHomoAssoc) {
-        // for-in-Schleife iteriert �ber die Schl�ssel des assoziativen Arrays
-        let studi = studiHomoAssoc[matrikel];
-        let line = matrikel + ": ";
-        line += studi.course + ", " + studi.name + ", " + studi.firstname + ", " + studi.age + ", ";
-        line += studi.gender ? "male" : "female";
-        _response.write(line + "\n");
-    }
+    /*for (let matrikel in studiHomoAssoc) {
+            // for-in-Schleife iteriert �ber die Schl�ssel des assoziativen Arrays
+            let studi: Studi = studiHomoAssoc[matrikel];
+            let line: string = matrikel + ": ";
+            line += studi.course + ", " + studi.name + ", " + studi.firstname + ", " + studi.age + ", ";
+            line += studi.gender ? "male" : "female";
+            _response.write(line + "\n");
+}*/
 }
 function search(query, _response) {
-    /*let matrikelSearch: number = parseInt(query["searchFor"]);
-    Database.findStudent(matrikelSearch, function(json: string): void {
+    let searchedMatrikel = parseInt(query["searchFor"]);
+    Database.findStudent(searchedMatrikel, function (json) {
         handleResponse(_response, json);
-    });*/
+    });
 }
 function error() {
     //alert("Error");
