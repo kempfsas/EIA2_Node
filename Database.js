@@ -1,6 +1,7 @@
 "use strict";
 const Mongo = require("mongodb");
 console.log("Database starting");
+//import * as Server from "./Server";
 let databaseURL = "mongodb://localhost:27017";
 let databaseName = "Test";
 let db;

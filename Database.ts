@@ -2,7 +2,7 @@
 import * as Mongo from "mongodb";
 console.log("Database starting");
 
-import * as Server from "./Server";
+//import * as Server from "./Server";
 
 let databaseURL: string = "mongodb://localhost:27017";
 let databaseName: string = "Test";
