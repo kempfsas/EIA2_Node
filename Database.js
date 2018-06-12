@@ -48,8 +48,8 @@ function findAll(_callback) {
     }
 }
 exports.findAll = findAll;
-function findStudent(matrikelSearch, _callback) {
-    var myCursor = students.find({ "matrikel": matrikelSearch }).limit(1);
+function findStudent(searchedMatrikel, _callback) {
+    var myCursor = students.find({ "matrikel": searchedMatrikel }).limit(1);
     myCursor.next(prepareStudent);
     function prepareStudent(_e, studi) {
         if (_e) {

@@ -54,14 +54,16 @@ export function findAll(_callback: Function): void {
                 line += studentArray[i].gender ? "male" : "female";
                 line += "\n";
             }
+            
             _callback(line);
+            
             }
         
     }
 }
 
-export function findStudent(matrikelSearch: number, _callback: Function): void {
-    var myCursor: Mongo.Cursor = students.find({ "matrikel": matrikelSearch }).limit(1);
+export function findStudent(searchedMatrikel: number, _callback: Function): void {
+    var myCursor: Mongo.Cursor = students.find({ "matrikel": searchedMatrikel }).limit(1);
     myCursor.next(prepareStudent);
 
     function prepareStudent(_e: Mongo.MongoError, studi: Studi): void {
