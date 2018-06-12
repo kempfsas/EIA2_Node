@@ -39,7 +39,7 @@ function handleInsert(_e: Mongo.MongoError): void {
 }
 
 
-/*export function findAll(_callback: Function): void {
+export function findAll(_callback: Function): void {
     var cursor: Mongo.Cursor = students.find();
     cursor.toArray(prepareAnswer);
 
@@ -60,7 +60,7 @@ function handleInsert(_e: Mongo.MongoError): void {
             }
         
     }
-}*/
+}
 
 export function findStudent(searchedMatrikel: number, _callback: Function): void {
     var myCursor: Mongo.Cursor = students.find({ "matrikel": searchedMatrikel }).limit(1);
