@@ -30,25 +30,28 @@ exports.insert = insert;
 function handleInsert(_e) {
     console.log("Database insertion returned -> " + _e);
 }
-function findAll(_callback) {
-    var cursor = students.find();
+/*export function findAll(_callback: Function): void {
+    var cursor: Mongo.Cursor = students.find();
     cursor.toArray(prepareAnswer);
-    function prepareAnswer(_e, studentArray) {
+
+    function prepareAnswer(_e: Mongo.MongoError, studentArray: Studi[]): void {
         if (_e) {
             _callback("Error" + _e);
         }
         else {
-            let line = "";
-            for (let i = 0; i < studentArray.length; i++) {
+            let line: string = "";
+            for (let i: number = 0; i < studentArray.length; i++) {
                 line += studentArray[i].matrikel + ": " + studentArray[i].course + ", " + studentArray[i].name + ", " + studentArray[i].firstname + ", " + studentArray[i].age + ", ";
                 line += studentArray[i].gender ? "male" : "female";
                 line += "\n";
             }
+            
             _callback(line);
-        }
+            
+            }
+        
     }
-}
-exports.findAll = findAll;
+}*/
 function findStudent(searchedMatrikel, _callback) {
     var myCursor = students.find({ "matrikel": searchedMatrikel }).limit(1);
     myCursor.next(prepareStudent);
