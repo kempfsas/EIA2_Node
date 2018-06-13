@@ -15,6 +15,6 @@ interface Studis {
     [matrikel: string]: Studi;
 }
 
-let studiSimpleArray: Studi[] = [];
+//let studiSimpleArray: Studi[] = [];
 
 let studiHomoAssoc: Studis = {};
