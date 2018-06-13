@@ -62,7 +62,7 @@ function findStudent(searchedMatrikel, _callback) {
             _callback(line);
         }
         else {
-            _callback("No Match");
+            _callback("No Student found");
         }
     }
 }

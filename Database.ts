@@ -76,7 +76,7 @@ export function findStudent(searchedMatrikel: number, _callback: Function): void
             line += studi.gender ? "male" : "female";
             _callback(line);
         } else {
-            _callback("No Match");
+            _callback("No Student found");
         }
     }
 }
